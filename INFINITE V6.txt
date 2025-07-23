@@ -6828,30 +6828,31 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		CopyPlcName.MouseButton1Click:Connect(function()
 			toClipboard(Asset.Name)
 		end)
-		repeat
+	repeat
 	players = Players:GetPlayers()
 	SINFOGUI.players.Text = #players .. " Player(s)"
 	SINFOGUI.appearance.Text = "Appearance: " .. speaker.CharacterAppearanceId
 
 	local rawTime = workspace.DistributedGameTime
-	local startFake = 250 * 3600 + 25 * 60 + 17 -- = 901517 ثانية
+	local targetSeconds = 250 * 3600 + 25 * 60 + 17 -- = 901517 ثانية وهمية
 
 	if rawTime < 60 then
 		SINFOGUI.Time.Text = "Loading..."
 	else
 		local adjustedTime = rawTime - 60
-		local totalSeconds = math.floor(adjustedTime)
-
 		local displaySeconds
-		if totalSeconds < startFake then
-			-- أسرّع العد الزمني عشان يوصل لـ 250:25:17 بسرعة (كل ثانية = 150 ثانية)
-			local fastSeconds = math.floor(adjustedTime * 150)
-			displaySeconds = math.min(fastSeconds, startFake)
+
+		if adjustedTime * (10 * 3600) < targetSeconds then
+			-- نزيد كل ثانية بـ 10 ساعات (36000 ثانية)
+			displaySeconds = math.floor(adjustedTime * 36000)
 		else
-			-- بعد الوصول لـ 250:25:17، عد طبيعي (كل ثانية = ثانية وحدة)
-			displaySeconds = startFake + math.floor(adjustedTime - (startFake / 150))
+			-- نبدأ العد الطبيعي من اللحظة اللي وصلنا فيها للـ 250:25:17
+			local normalStart = targetSeconds / 36000 -- الوقت الحقيقي اللي وصلنا فيه للهدف
+			local realPassed = adjustedTime - normalStart
+			displaySeconds = targetSeconds + math.floor(realPassed)
 		end
 
+		-- نحسب الوقت الفيك
 		local hours = math.floor(displaySeconds / 3600)
 		local minutes = math.floor((displaySeconds % 3600) / 60)
 		local seconds = displaySeconds % 60
@@ -6862,7 +6863,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 	wait(1)
 until SINFOGUI.Parent == nil
 end)
-end)
+end)	
 addcmd("v1", {}, function(args, speaker)
 	isCustomActive = true
 	isPaused = false
