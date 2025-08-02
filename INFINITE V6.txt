@@ -6828,31 +6828,29 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 		CopyPlcName.MouseButton1Click:Connect(function()
 			toClipboard(Asset.Name)
 		end)
-	repeat
+repeat
 	players = Players:GetPlayers()
 	SINFOGUI.players.Text = #players .. " Player(s)"
 	SINFOGUI.appearance.Text = "Appearance: " .. speaker.CharacterAppearanceId
 
 	local rawTime = workspace.DistributedGameTime
-	local targetSeconds = 250 * 3600 + 25 * 60 + 17 -- = 901517 ثانية وهمية
+	local goalSeconds = 1153 * 3600 + 24 * 60 + 10 -- = 4157450 ثانية وهمية
 
 	if rawTime < 60 then
 		SINFOGUI.Time.Text = "Loading..."
 	else
-		local adjustedTime = rawTime - 60
-		local displaySeconds
+		local adjustedTime = rawTime - 60 -- خصم الدقيقة الأولى
 
-		if adjustedTime * (10 * 3600) < targetSeconds then
-			-- نزيد كل ثانية بـ 10 ساعات (36000 ثانية)
-			displaySeconds = math.floor(adjustedTime * 36000)
+		local displaySeconds
+		local fastSeconds = math.floor(adjustedTime * (10 * 3600)) -- كل ثانية = 10 ساعات = 36000 ثانية
+
+		if fastSeconds < goalSeconds then
+			displaySeconds = fastSeconds
 		else
-			-- نبدأ العد الطبيعي من اللحظة اللي وصلنا فيها للـ 250:25:17
-			local normalStart = targetSeconds / 36000 -- الوقت الحقيقي اللي وصلنا فيه للهدف
-			local realPassed = adjustedTime - normalStart
-			displaySeconds = targetSeconds + math.floor(realPassed)
+			-- بعد الوصول للهدف، نبدأ نعد طبيعي ثانية بثانية
+			displaySeconds = goalSeconds + math.floor(adjustedTime - (goalSeconds / 36000))
 		end
 
-		-- نحسب الوقت الفيك
 		local hours = math.floor(displaySeconds / 3600)
 		local minutes = math.floor((displaySeconds % 3600) / 60)
 		local seconds = displaySeconds % 60
@@ -6863,7 +6861,7 @@ addcmd('serverinfo',{'info','sinfo'},function(args, speaker)
 	wait(1)
 until SINFOGUI.Parent == nil
 end)
-end)	
+end)
 addcmd("v1", {}, function(args, speaker)
 	isCustomActive = true
 	isPaused = false
@@ -13078,3 +13076,4 @@ task.spawn(function()
 	minimizeHolder()
 	if IsOnMobile then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
+
