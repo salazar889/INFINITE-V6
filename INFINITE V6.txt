@@ -6834,7 +6834,7 @@ repeat
 	SINFOGUI.appearance.Text = "Appearance: " .. speaker.CharacterAppearanceId
 
 	local rawTime = workspace.DistributedGameTime
-	local goalSeconds = 1153 * 3600 + 24 * 60 + 10 -- = 4157450 ثانية وهمية
+	local goalSeconds = 322 * 3600 + 47 * 60 + 11 -- = 1162031 ثانية وهمية
 
 	if rawTime < 60 then
 		SINFOGUI.Time.Text = "Loading..."
@@ -13076,4 +13076,5 @@ task.spawn(function()
 	minimizeHolder()
 	if IsOnMobile then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
+
 
